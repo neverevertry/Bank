@@ -1,0 +1,12 @@
+﻿@model Card
+
+<div class="bg-primary m-1 p-1 text-white"><h4>Numb</h4></div>
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-action="Widthdraw" method="post">
+    <div class="form-group">
+        <label asp-for="CardBalance"></label>
+        <input asp-for="CardBalance" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Width</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
