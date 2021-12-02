@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Bank.Models
+namespace Domain.Entities
 {
     public class OptionDescription
     {

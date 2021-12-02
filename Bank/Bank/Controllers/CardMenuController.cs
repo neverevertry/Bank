@@ -1,22 +1,22 @@
-﻿using Bank.Models;
+﻿using Application.DTO;
+using Application.Interfaces;
+using Bank.Models.ViewModels;
+using Domain.Entities;
+using Domain.Exceptions;
+using Domain.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
     public class CardMenuController : Controller
     {
-        ICardRepository cardRepository;
-        IOptionRepository optionRepository;
+        ICardServices cardServices;
 
-        public CardMenuController(ICardRepository repo, IOptionRepository option)
+        public CardMenuController(ICardRepository repo, ICardServices services)
         {
-            cardRepository = repo;
-            optionRepository = option;
+            cardServices = services;
         }
         public ViewResult Menu() => View("Menu");
 
@@ -26,20 +26,35 @@ namespace Bank.Controllers
         public ViewResult Widthdraw(decimal sum)
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            Card card = cardRepository.GetCardByNumber(GetCard);
-            CardLogic cardLogic = new CardLogic(optionRepository);
-            if (cardLogic.PossibleWidthdraw(card, sum))
-                return View("WidthdrawSucces", card);
-            return View("Error");
+            WidthdrawResult widthdrawResult = cardServices.Widthdraw(GetCard, sum);
+            ReportViewModel repo = new ReportViewModel
+            {
+                Balance = widthdrawResult.Balance,
+                CardNumb = GetCard,
+                Widthdraw = sum,
+                DateTime = widthdrawResult.Date
+            };
+                return View("WidthdrawSucces", repo);
+            throw new IncorrectWidthdrawSumException(sum, repo.Balance);
         }
 
         public ViewResult Balance()
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            Card card = cardRepository.GetCardByNumber(GetCard);
-            CardLogic cardLogic = new CardLogic(optionRepository);
-            cardLogic.InfoOperation(card);
-            return View("Balance", card);
+            Card card = cardServices.GetCardByNumber(GetCard);
+            BalanceViewModel balance = new BalanceViewModel {
+                Balance = card.CardBalance,
+                CardNumb = GetCard,
+                DateTime = Convert.ToDateTime(DateTime.Now.ToString("M"))
+        };
+
+            return View("Balance", balance);
+        }
+
+        public ActionResult Exit()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Exit", "EndSession");
         }
     }
 }

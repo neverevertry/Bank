@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Bank.Migrations
+namespace DataAccess.Migrations
 {
     public partial class init : Migration
     {

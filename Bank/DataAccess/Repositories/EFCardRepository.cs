@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Domain.Entities;
+using Domain.Interface;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace Bank.Models
+namespace DataAccess.Contexts
 {
     public class EFCardRepository : ICardRepository
     {

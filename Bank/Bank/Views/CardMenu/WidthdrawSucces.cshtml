@@ -1,4 +1,9 @@
-﻿@model Card
+﻿@model ReportViewModel
 <p><h1>Operation Succesfull</h1></p>
-<div>You balance: @Model.CardBalance</div>
+<br />You card balance: @Model.CardNumb
+<br />Card Id: @Model.Balance
+<br />Data: @Model.DateTime
+<br />Widthdraw sum: @Model.Widthdraw <br />
+
 <a asp-action="Menu" class="btn btn-secondary">Go Back</a>
+<a href="Exit">Exit</a>

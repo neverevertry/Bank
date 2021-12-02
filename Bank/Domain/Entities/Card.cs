@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Bank.Models
+namespace Domain.Entities
 {
     public class Card
     {
@@ -15,6 +12,7 @@ namespace Bank.Models
         [Required(ErrorMessage = "Input password")]
         public string Password { get; set; }
         public bool CardBanned { get; set; }
+        [Required(ErrorMessage = "test")]
         public decimal CardBalance { get; set; }
         public ICollection<Option> Options { get; set; }
     }

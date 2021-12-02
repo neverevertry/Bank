@@ -1,19 +1,18 @@
-﻿using Bank.Models;
+﻿using Application.Interfaces;
+using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
     public class CardController : Controller
     {
-        ICardRepository cardRepository;
-        public CardController(ICardRepository card)
+        ICardServices service;
+        public CardController(ICardServices _service)
         {
-            cardRepository = card;
+            service = _service;
         }
 
         public ViewResult Index() => View("Index");
@@ -21,21 +20,26 @@ namespace Bank.Controllers
         [HttpPost]
         public ViewResult Index(string CardNumb)
         {
-            Card GetCard = cardRepository.GetCardByNumber(CardNumb);
-            HttpContext.Session.SetString("CardNumber", GetCard.CardNumb);
-            if (GetCard != null && GetCard.CardBanned == false)
+           Card card = service.GetCardByNumber(CardNumb);
+           if (card != null)
+           {
+                if (card.CardBanned)
+                    throw new BlockedCardException(CardNumb);
+                HttpContext.Session.SetString("CardNumber", service.GetCardByNumber(CardNumb).CardNumb);
                 return View("Password");
-            return View("Error");
+           }
+            throw new IncorrectLoginException(CardNumb);
         }
 
+        public ViewResult Password() => View("Password");
+
         [HttpPost]
-        public RedirectToActionResult Password(string password)
+        public ActionResult Password(string password)
         {
             string CardNumb = HttpContext.Session.GetString("CardNumber");
-            Card GetCard = cardRepository.GetCardByNumber(CardNumb);
-            if (GetCard.Password == password)
+            if (service.IsPinCorrect(password, CardNumb))
                 return RedirectToAction("Menu", "CardMenu");
-            return RedirectToAction("Error");
+            throw new IncorrectPinException();
         }
     }
 }
