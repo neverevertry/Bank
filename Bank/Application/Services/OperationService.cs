@@ -15,9 +15,18 @@ namespace Application
 
         public Option AddInfoOption(Card card, decimal? sum)
         {
-            Option option = new Option { Card = card, CardId = card.CardId, DateOperation = DateTime.Now, Widthdraw = (decimal)sum, OptionDescriptionId = 1 };
-            optionService.AddOptione(option);
-            return option;
+            if (sum == null)
+            {
+                Option opt = new Option { Card = card, CardId = card.CardId, DateOperation = DateTime.Now,OptionDescriptionId = 2 };
+                optionService.AddOptione(opt);
+                return opt;
+            }
+            else
+            {
+                Option option = new Option { Card = card, CardId = card.CardId, DateOperation = DateTime.Now, Widthdraw = (decimal)sum, OptionDescriptionId = 1 };
+                optionService.AddOptione(option);
+                return option;
+            }
         }
     }
 }

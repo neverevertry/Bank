@@ -42,6 +42,7 @@ namespace Bank.Controllers
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
             Card card = cardServices.GetCardByNumber(GetCard);
+            cardServices.Balance(GetCard);
             BalanceViewModel balance = new BalanceViewModel {
                 Balance = card.CardBalance,
                 CardNumb = GetCard,

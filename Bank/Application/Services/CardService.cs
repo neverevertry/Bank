@@ -54,5 +54,14 @@ namespace Application
             else
                 throw new IncorrectWidthdrawSumException(sum, card.CardBalance);
         }
+
+        public void Balance(string numberCard)
+        {
+            Card card = cardRepo.GetCardByNumber(numberCard);
+            if(card.CardNumb != null)
+            {
+                Option opt = operationService.AddInfoOption(card, null);
+            }
+        }
     }
 }
