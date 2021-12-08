@@ -1,9 +1,10 @@
 ﻿using Domain.Entities;
+using System.Threading.Tasks;
 
 namespace Domain.Interface
 {
     public interface IOptionRepository
     {
-        void AddOptione(Option option);
+        Task AddOptione(Option option);
     }
 }

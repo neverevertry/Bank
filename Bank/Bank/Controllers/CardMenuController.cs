@@ -7,6 +7,7 @@ using Domain.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
@@ -23,10 +24,10 @@ namespace Bank.Controllers
         public ViewResult Widthdraw() => View("Widthdraw");
 
         [HttpPost]
-        public ViewResult Widthdraw(decimal sum)
+        public async Task<IActionResult> Widthdraw(decimal sum)
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            Card card = cardServices.GetCardByNumber(GetCard);
+            Card card = await cardServices.GetCardByNumber(GetCard);
             WidthdrawViewDTO widthdrawResult = cardServices.Widthdraw(card, sum);
             ReportViewModel repo = new ReportViewModel
             {
@@ -39,10 +40,10 @@ namespace Bank.Controllers
             throw new IncorrectWidthdrawSumException(sum, repo.Balance);
         }
 
-        public ViewResult Balance()
+        public async Task<IActionResult> Balance()
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            Card card = cardServices.GetCardByNumber(GetCard);
+            Card card = await cardServices.GetCardByNumber(GetCard);
             BalanceViewDTO DTObalance = cardServices.Balance(card);
             BalanceViewModel balanceViewModel = new BalanceViewModel
             {

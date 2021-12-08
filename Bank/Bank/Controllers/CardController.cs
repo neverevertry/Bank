@@ -4,6 +4,7 @@ using Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
@@ -18,14 +19,14 @@ namespace Bank.Controllers
         public ViewResult Index() => View("Index");
 
         [HttpPost]
-        public ViewResult Index(string CardNumb)
+        public async Task<IActionResult> Index(string CardNumb)
         {
-           Card card = service.GetCardByNumber(CardNumb);
+           Card card =  await service.GetCardByNumber(CardNumb);
            if (card != null)
            {
                 if (card.CardBanned)
                     throw new BlockedCardException(CardNumb);
-                HttpContext.Session.SetString("CardNumber", service.GetCardByNumber(CardNumb).CardNumb);
+                HttpContext.Session.SetString("CardNumber",CardNumb);
                 return View("Password");
            }
             throw new IncorrectLoginException(CardNumb);
@@ -34,10 +35,10 @@ namespace Bank.Controllers
         public ViewResult Password() => View("Password");
 
         [HttpPost]
-        public ActionResult Password(string password)
+        public async Task<IActionResult> Password(string password)
         {
             string CardNumb = HttpContext.Session.GetString("CardNumber");
-            Card card = service.GetCardByNumber(CardNumb);
+            Card card = await service.GetCardByNumber(CardNumb);
             if (service.IsPinCorrect(password, card))
                 return RedirectToAction("Menu", "CardMenu");
             throw new IncorrectPinException();

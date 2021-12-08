@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interface;
+using System.Threading.Tasks;
 
 namespace DataAccess.Contexts
 {
@@ -9,10 +10,10 @@ namespace DataAccess.Contexts
 
         public EFOptionRepository(ApplicationDbContext cont) => context = cont;
 
-        public void AddOptione(Option option)
+        public async Task AddOptione(Option option)
         {
             context.Options.Add(option);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

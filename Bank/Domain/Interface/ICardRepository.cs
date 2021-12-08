@@ -1,10 +1,11 @@
 ﻿using Domain.Entities;
+using System.Threading.Tasks;
 
 namespace Domain.Interface
 {
     public interface ICardRepository
     {
-        Card GetCardByNumber(string CardNumb);
-        void Update(Card card);
+        Task<Card> GetCardByNumber(string CardNumb);
+        Task Update(Card card);
     }
 }

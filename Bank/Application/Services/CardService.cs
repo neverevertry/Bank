@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interface;
 using System;
+using System.Threading.Tasks;
 
 namespace Application
 {
@@ -28,9 +29,9 @@ namespace Application
             }
         }
 
-        public Card GetCardByNumber(string number)
+        public async Task<Card> GetCardByNumber(string number)
         {
-            Card card = cardRepo.GetCardByNumber(number);
+            Card card = await cardRepo.GetCardByNumber(number);
             return card ?? null;
         }
 
@@ -44,13 +45,13 @@ namespace Application
 
         public WidthdrawViewDTO Widthdraw(Card card, decimal sum)
         {
-            if (card.CardBalance > sum)
-            {
-                card.CardBalance -= sum;
-                Option opt = operationService.AddInfoOption(card, sum);
-                return new WidthdrawViewDTO { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation, Sum = sum }; 
-            }
-            throw new IncorrectWidthdrawSumException(sum, card.CardBalance);
+            if (card.CardBalance < sum)
+                throw new IncorrectWidthdrawSumException(sum, card.CardBalance);
+
+            card.CardBalance -= sum;
+            Option opt = operationService.AddInfoOption(card, sum);
+            return new WidthdrawViewDTO { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation, Sum = sum }; 
+          
         }
 
         public BalanceViewDTO Balance(Card card)

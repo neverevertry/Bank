@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
 using Domain.Interface;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataAccess.Contexts
 {
@@ -10,8 +12,12 @@ namespace DataAccess.Contexts
 
         public EFCardRepository(ApplicationDbContext contextdb) => context = contextdb;
 
-        public Card GetCardByNumber(string numb) => context.Cards.FirstOrDefault(x => x.CardNumb == numb);
+        public async Task<Card> GetCardByNumber(string numb) => await context.Cards.FirstOrDefaultAsync(x => x.CardNumb == numb);
 
-        public void Update(Card card) => context.Cards.Update(card);
+        public async Task Update(Card card)
+        {
+            context.Cards.Update(card);
+            await context.SaveChangesAsync();
+        }
     }
 }
