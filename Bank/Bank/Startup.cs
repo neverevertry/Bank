@@ -24,7 +24,7 @@ namespace Bank
             services.AddTransient<ICardRepository, EFCardRepository>();
             services.AddTransient<IOptionRepository, EFOptionRepository>();
             services.AddTransient<ICardServices, CardService>();
-            services.AddTransient<IOperationService, OperationService>();
+            services.AddTransient<IOptionService, OptionService>();
             services.AddSession();
         }
 

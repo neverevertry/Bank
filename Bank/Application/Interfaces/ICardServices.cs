@@ -6,9 +6,9 @@ namespace Application.Interfaces
     public interface ICardServices
     {
         Card GetCardByNumber(string number);
-        bool IsPinCorrect(string pass, string numberCard);
-        WidthdrawResult Widthdraw(string numberCard, decimal sum);
-        void BlockCard(string numberCard);
-        void Balance(string numberCard);
+        bool IsPinCorrect(string pass, Card card);
+        WidthdrawViewDTO Widthdraw(Card card, decimal sum);
+        private void BlockCard(Card card) { }
+        BalanceViewDTO Balance(Card card);
     }
 }

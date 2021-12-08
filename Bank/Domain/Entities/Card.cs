@@ -7,12 +7,12 @@ namespace Domain.Entities
     {
         [Key]
         public int CardId { get; set; }
-        [Required(ErrorMessage ="Input Numb card")]
+        [Required]
         public string CardNumb { get; set; }
-        [Required(ErrorMessage = "Input password")]
+        [Required]
         public string Password { get; set; }
         public bool CardBanned { get; set; }
-        [Required(ErrorMessage = "test")]
+        [Required]
         public decimal CardBalance { get; set; }
         public ICollection<Option> Options { get; set; }
     }

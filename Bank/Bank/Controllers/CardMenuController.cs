@@ -12,7 +12,7 @@ namespace Bank.Controllers
 {
     public class CardMenuController : Controller
     {
-        ICardServices cardServices;
+        private readonly ICardServices cardServices;
 
         public CardMenuController(ICardRepository repo, ICardServices services)
         {
@@ -26,7 +26,8 @@ namespace Bank.Controllers
         public ViewResult Widthdraw(decimal sum)
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            WidthdrawResult widthdrawResult = cardServices.Widthdraw(GetCard, sum);
+            Card card = cardServices.GetCardByNumber(GetCard);
+            WidthdrawViewDTO widthdrawResult = cardServices.Widthdraw(card, sum);
             ReportViewModel repo = new ReportViewModel
             {
                 Balance = widthdrawResult.Balance,
@@ -42,14 +43,15 @@ namespace Bank.Controllers
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
             Card card = cardServices.GetCardByNumber(GetCard);
-            cardServices.Balance(GetCard);
-            BalanceViewModel balance = new BalanceViewModel {
-                Balance = card.CardBalance,
-                CardNumb = GetCard,
-                DateTime = Convert.ToDateTime(DateTime.Now.ToString("M"))
-        };
+            BalanceViewDTO DTObalance = cardServices.Balance(card);
+            BalanceViewModel balanceViewModel = new BalanceViewModel
+            {
+                DateTime = DTObalance.Date,
+                Balance = DTObalance.Balance,
+                CardNumb = GetCard
+            };
 
-            return View("Balance", balance);
+            return View("Balance", balanceViewModel);
         }
 
         public ActionResult Exit()

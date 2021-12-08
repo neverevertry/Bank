@@ -3,28 +3,28 @@ using Application.Interfaces;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interface;
+using System;
 
 namespace Application
 {
     public class CardService : ICardServices
     {
-        ICardRepository cardRepo;
-        IOperationService operationService;
+        private readonly ICardRepository cardRepo;
+        private readonly IOptionService operationService;
         private static int numberOfApptems = 0;
-        public CardService(ICardRepository _cardRepo, IOperationService operation)
+        public CardService(ICardRepository _cardRepo, IOptionService operation)
         {
             cardRepo = _cardRepo;
             operationService = operation;
         }
 
-        public void BlockCard(string numberCard)
+        private void BlockCard(Card card)
         {
-            Card card = cardRepo.GetCardByNumber(numberCard);
             numberOfApptems++;
             if(card.CardBanned || numberOfApptems > 4)
             {
                 card.CardBanned = true;
-                throw new BlockedCardException(numberCard);
+                throw new BlockedCardException(card.CardNumb);
             }
         }
 
@@ -34,34 +34,33 @@ namespace Application
             return card ?? null;
         }
 
-        public bool IsPinCorrect(string pass, string numberCard)
+        public bool IsPinCorrect(string pass, Card card)
         {
-            if (cardRepo.GetCardByNumber(numberCard).Password == pass)
+            if (card.Password == pass)
                 return true;
-            BlockCard(numberCard);
+            BlockCard(card);
             return false;
         }
 
-        public WidthdrawResult Widthdraw(string numberCard, decimal sum)
+        public WidthdrawViewDTO Widthdraw(Card card, decimal sum)
         {
-            Card card = cardRepo.GetCardByNumber(numberCard);
             if (card.CardBalance > sum)
             {
                 card.CardBalance -= sum;
                 Option opt = operationService.AddInfoOption(card, sum);
-                return new WidthdrawResult { Balance = card.CardBalance, CardNumber = numberCard, Date = opt.DateOperation, Sum = sum }; 
+                return new WidthdrawViewDTO { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation, Sum = sum }; 
             }
-            else
-                throw new IncorrectWidthdrawSumException(sum, card.CardBalance);
+            throw new IncorrectWidthdrawSumException(sum, card.CardBalance);
         }
 
-        public void Balance(string numberCard)
+        public BalanceViewDTO Balance(Card card)
         {
-            Card card = cardRepo.GetCardByNumber(numberCard);
             if(card.CardNumb != null)
             {
-                Option opt = operationService.AddInfoOption(card, null);
+                operationService.AddInfoOption(card, null);
+                return new BalanceViewDTO { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = DateTime.Now };
             }
+            return null;
         }
     }
 }

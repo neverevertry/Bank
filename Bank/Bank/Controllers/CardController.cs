@@ -9,7 +9,7 @@ namespace Bank.Controllers
 {
     public class CardController : Controller
     {
-        ICardServices service;
+        private readonly ICardServices service;
         public CardController(ICardServices _service)
         {
             service = _service;
@@ -37,7 +37,8 @@ namespace Bank.Controllers
         public ActionResult Password(string password)
         {
             string CardNumb = HttpContext.Session.GetString("CardNumber");
-            if (service.IsPinCorrect(password, CardNumb))
+            Card card = service.GetCardByNumber(CardNumb);
+            if (service.IsPinCorrect(password, card))
                 return RedirectToAction("Menu", "CardMenu");
             throw new IncorrectPinException();
         }

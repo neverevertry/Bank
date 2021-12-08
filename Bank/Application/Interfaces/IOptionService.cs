@@ -2,7 +2,7 @@
 
 namespace Application.Interfaces
 {
-    public interface IOperationService
+    public interface IOptionService
     {
         Option AddInfoOption(Card card, decimal? sum);
     }
