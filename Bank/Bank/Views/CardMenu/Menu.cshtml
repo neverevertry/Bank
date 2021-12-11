@@ -1,3 +1,14 @@
-﻿<p><a href="Widthdraw">Widthdraw Cash</a></p>
-<a href="Balance">Balance</a>
-<a href="Exit">Exit</a>
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SportsStory</title>
+</head>
+<body>
+    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("Balance", "CardMenu")'">Balance</button>
+    <br />
+    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("Widthdraw", "CardMenu")'">Widthdraw</button>
+    <br />
+    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("Exit", "CardMenu")'">Exit</button>
+</body>
+</html>

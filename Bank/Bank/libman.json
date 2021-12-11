@@ -17,6 +17,10 @@
     {
       "library": "jquery-validate@1.19.3",
       "destination": "lib/jquery-validate/"
+    },
+    {
+      "library": "font-awesome@5.15.4",
+      "destination": "lib/font-awesome/"
     }
   ]
 }
