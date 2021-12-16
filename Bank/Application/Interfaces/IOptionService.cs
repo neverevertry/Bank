@@ -4,6 +4,6 @@ namespace Application.Interfaces
 {
     public interface IOptionService
     {
-        Option AddInfoOption(Card card, decimal? sum);
+        Option Log(int cardId, decimal? sum, int optionDescriptionId);
     }
 }

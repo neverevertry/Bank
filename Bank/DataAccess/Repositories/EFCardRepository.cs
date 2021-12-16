@@ -12,7 +12,9 @@ namespace DataAccess.Contexts
 
         public EFCardRepository(ApplicationDbContext contextdb) => context = contextdb;
 
-        public async Task<Card> GetCardByNumber(string numb) => await context.Cards.FirstOrDefaultAsync(x => x.CardNumb == numb);
+        public async Task<Card> GetCardByNumber(string numb) => await context.Cards
+                                                                             .AsNoTracking()
+                                                                             .SingleOrDefaultAsync(x => x.CardNumb == numb);
 
         public async Task Update(Card card)
         {

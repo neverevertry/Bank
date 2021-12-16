@@ -8,10 +8,10 @@ namespace Domain.Entities
         [Key]
         public int CardId { get; set; }
         [Required]
-        public string CardNumb { get; set; }
+        public string CardNumb { get; set; } // to do : rename to cardnumber
         [Required]
-        public string Password { get; set; }
-        public bool CardBanned { get; set; }
+        public string PinHash { get; set; }
+        public bool CardBanned { get; set; } // is banned/ is block
         [Required]
         public decimal CardBalance { get; set; }
         public ICollection<Option> Options { get; set; }

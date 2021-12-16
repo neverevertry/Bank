@@ -4,6 +4,6 @@ namespace Domain.Exceptions
 {
     public class IncorrectPinException : Exception
     {
-        public IncorrectPinException() : base("Incorrect password") { }
+        public IncorrectPinException() : base("Incorrect pin") { }
     }
 }

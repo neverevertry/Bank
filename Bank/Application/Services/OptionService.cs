@@ -1,22 +1,28 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interface;
-using System;
 
 namespace Application
 {
     public class OptionService : IOptionService
     {
-        private readonly IOptionRepository optionService;
-        public OptionService(IOptionRepository option)
+        private readonly IOptionRepository _optionRepository;
+        private readonly ITimeProvider _timeProvider;
+
+        public OptionService(IOptionRepository optionRepository, ITimeProvider timeProvider)
         {
-            optionService = option;
+            _optionRepository = optionRepository;
+            _timeProvider = timeProvider;
         }
 
-        public Option AddInfoOption(Card card, decimal? sum)
+        public Option Log(int cardId, decimal? sum, int optionDescriptionId)
         {
-            Option opt = new Option { Card = card, CardId = card.CardId, DateOperation = DateTime.Now,OptionDescriptionId  = sum.HasValue? 2: 1, Widthdraw = sum };
-            optionService.AddOptione(opt);
+            Option opt = new Option { CardId = cardId,  
+                                      DateOperation = _timeProvider.Now,
+                                      OptionDescriptionId  = optionDescriptionId, 
+                                      Widthdraw = sum 
+                                    };
+            _optionRepository.Add(opt);
             return opt;
         }
     }

@@ -7,8 +7,8 @@ namespace Application.Interfaces
     public interface ICardServices
     {
         Task<Card> GetCardByNumber(string number);
-        bool IsPinCorrect(string pass, Card card);
-        WidthdrawViewDTO Widthdraw(Card card, decimal sum);
-        BalanceViewDTO Balance(Card card);
+        void ValidatePin(string pass, Card card);
+        ReportDto Widthdraw(Card card, decimal sum);
+        BalanceDto Balance(Card card);
     }
 }

@@ -5,6 +5,6 @@ namespace Domain.Interface
 {
     public interface IOptionRepository
     {
-        Task AddOptione(Option option);
+        Task Add(Option option);
     }
 }

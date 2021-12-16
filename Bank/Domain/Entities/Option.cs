@@ -10,8 +10,8 @@ namespace Domain.Entities
         public Card Card { get; set; }
         public int CardId { get; set; }
         public DateTime DateOperation { get; set; }
-        public decimal? Widthdraw { get; set; }
-        public OptionDescription OptionsDesc { get; set; }
+        public decimal? Widthdraw { get; set; } // wid -> withdraw
+        public OptionDescription OptionsDesc { get; set; } // type// description
         public int OptionDescriptionId { get; set; }
     }
 }

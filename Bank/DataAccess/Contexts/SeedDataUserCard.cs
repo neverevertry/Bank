@@ -12,15 +12,17 @@ namespace DataAccess.Contexts
         {
             ApplicationDbContext dbcontext = app.ApplicationServices.CreateScope().ServiceProvider.GetService < ApplicationDbContext>();
             dbcontext.Database.Migrate();
+            string hashPass = BCrypt.Net.BCrypt.HashPassword("test");
 
             if (!dbcontext.Cards.Any())
             {
                 dbcontext.Cards.AddRange
                     (
-                    new Card { CardNumb = "1111111111111111", CardBalance = 250M, CardBanned = false, Password = "test" },
-                    new Card { CardNumb = "2111111111111111", CardBalance = 2250M, CardBanned = true, Password = "test" },
-                    new Card { CardNumb = "3111111111111111", CardBalance = 2310M, CardBanned = true, Password = "test" },
-                    new Card { CardNumb = "4111111111111111", CardBalance = 1150M, CardBanned = false, Password = "test" }
+                    new Card { CardNumb = "1111111111111111", CardBalance = 250M, CardBanned = false, PinHash = "test" },
+                    new Card { CardNumb = "2111111111111111", CardBalance = 2250M, CardBanned = true, PinHash = "test" },
+                    new Card { CardNumb = "3111111111111111", CardBalance = 2310M, CardBanned = true, PinHash = "test" },
+                    new Card { CardNumb = "4111111111111111", CardBalance = 1150M, CardBanned = false, PinHash = "test" },
+                    new Card { CardNumb = "5111111111111111", CardBalance = 1150M, CardBanned = false, PinHash = hashPass }
                     );
                 dbcontext.optionDescriptions.AddRange(new OptionDescription { Descrtiptions = "Widthdraw" }, new OptionDescription { Descrtiptions = "Balance" });
             }

@@ -1,24 +1,26 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
+using AutoMapper;
 using Bank.Models.ViewModels;
 using Domain.Entities;
-using Domain.Exceptions;
-using Domain.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
     public class CardMenuController : Controller
     {
-        private readonly ICardServices cardServices;
+        private readonly ICardServices _cardService;
+        private readonly IMapper _mapper;
 
-        public CardMenuController(ICardRepository repo, ICardServices services)
+        public CardMenuController(ICardServices cardService, IMapper mapper)
         {
-            cardServices = services;
+            _cardService = cardService;
+            _mapper = mapper;
         }
+
+
         public ViewResult Menu() => View("Menu");
 
         public ViewResult Widthdraw() => View("Widthdraw");
@@ -27,38 +29,29 @@ namespace Bank.Controllers
         public async Task<IActionResult> Widthdraw(decimal sum)
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            Card card = await cardServices.GetCardByNumber(GetCard);
-            WidthdrawViewDTO widthdrawResult = cardServices.Widthdraw(card, sum);
-            ReportViewModel repo = new ReportViewModel
-            {
-                Balance = widthdrawResult.Balance,
-                CardNumb = GetCard,
-                Widthdraw = sum,
-                DateTime = widthdrawResult.Date
-            };
-                return View("WidthdrawSucces", repo);
-            throw new IncorrectWidthdrawSumException(sum, repo.Balance);
+            Card card = await _cardService.GetCardByNumber(GetCard);
+
+            ReportDto widthdrawResult = _cardService.Widthdraw(card, sum);
+            var report = _mapper.Map<ReportViewModel>(widthdrawResult);
+            return View("WidthdrawSucces", report);
         }
 
         public async Task<IActionResult> Balance()
         {
             string GetCard = HttpContext.Session.GetString("CardNumber");
-            Card card = await cardServices.GetCardByNumber(GetCard);
-            BalanceViewDTO DTObalance = cardServices.Balance(card);
-            BalanceViewModel balanceViewModel = new BalanceViewModel
-            {
-                DateTime = DTObalance.Date,
-                Balance = DTObalance.Balance,
-                CardNumb = GetCard
-            };
+            Card card = await _cardService.GetCardByNumber(GetCard);
 
-            return View("Balance", balanceViewModel);
+            BalanceDto balanceDto = _cardService.Balance(card);
+
+            var balance = _mapper.Map<BalanceViewModel>(balanceDto);
+
+            return View("Balance", balance);
         }
 
         public ActionResult Exit()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Exit", "EndSession");
+            return RedirectToAction("Index", "Card");
         }
     }
 }

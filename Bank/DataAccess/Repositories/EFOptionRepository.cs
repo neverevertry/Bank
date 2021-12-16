@@ -10,7 +10,7 @@ namespace DataAccess.Contexts
 
         public EFOptionRepository(ApplicationDbContext cont) => context = cont;
 
-        public async Task AddOptione(Option option)
+        public async Task Add(Option option)
         {
             context.Options.Add(option);
             await context.SaveChangesAsync();

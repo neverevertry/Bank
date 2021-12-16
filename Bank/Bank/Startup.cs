@@ -1,16 +1,13 @@
 using Application;
 using Application.Interfaces;
-using Bank.Models;
+using Application.Services;
+using Bank.Models.ViewModels;
 using DataAccess.Contexts;
 using Domain.Interface;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Net;
 
 namespace Bank
 {
@@ -25,6 +22,8 @@ namespace Bank
             services.AddTransient<IOptionRepository, EFOptionRepository>();
             services.AddTransient<ICardServices, CardService>();
             services.AddTransient<IOptionService, OptionService>();
+            services.AddTransient<ITimeProvider, TimeProvider>();
+            services.AddAutoMapper(typeof(Mapper.MapperProfile));
             services.AddSession();
         }
 
@@ -40,7 +39,7 @@ namespace Bank
                 options.MapControllerRoute("default", "{controller=Card}/{action=Index}"));
            
 
-            //SeedDataUserCard.EnsurePopulated(app);
+            SeedDataUserCard.EnsurePopulated(app);
         }
     }
 }

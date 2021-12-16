@@ -1,67 +1,69 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
+using Application.Services;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interface;
-using System;
 using System.Threading.Tasks;
 
 namespace Application
 {
     public class CardService : ICardServices
     {
-        private readonly ICardRepository cardRepo;
-        private readonly IOptionService operationService;
+        private readonly ICardRepository _cardRepository;
+        private readonly IOptionService _operationService;
+        private readonly ITimeProvider _timeProvider;
+
         private static int numberOfApptems = 0;
-        public CardService(ICardRepository _cardRepo, IOptionService operation)
-        {
-            cardRepo = _cardRepo;
-            operationService = operation;
-        }
 
-        private void BlockCard(Card card)
+        public CardService(ICardRepository cardRepository, IOptionService operation, ITimeProvider timeProvider)
         {
-            numberOfApptems++;
-            if(card.CardBanned || numberOfApptems > 4)
-            {
-                card.CardBanned = true;
-                throw new BlockedCardException(card.CardNumb);
-            }
+            _cardRepository = cardRepository;
+            _operationService = operation;
+            _timeProvider = timeProvider;
         }
-
         public async Task<Card> GetCardByNumber(string number)
         {
-            Card card = await cardRepo.GetCardByNumber(number);
-            return card ?? null;
+            Card card = await _cardRepository.GetCardByNumber(number);
+            if(card == null)
+                throw new CardWasNotFoundException(number);
+
+            if (card.CardBanned)
+                throw new CardWasBlockedException(number);
+
+            return card;
         }
 
-        public bool IsPinCorrect(string pass, Card card)
+        public void ValidatePin(string pass, Card card)
         {
-            if (card.Password == pass)
-                return true;
-            BlockCard(card);
-            return false;
+            if (VerifyHashPassword.VerifyHash(pass, card.PinHash))
+                 return;
+
+            numberOfApptems++;
+
+            if (numberOfApptems == 4)
+            {
+                card.CardBanned = true;
+                _cardRepository.Update(card);
+                throw new CardWasBlockedException(card.CardNumb);
+            }
+            throw new IncorrectPinException();
         }
 
-        public WidthdrawViewDTO Widthdraw(Card card, decimal sum)
+        public ReportDto Widthdraw(Card card, decimal sum)
         {
-            if (card.CardBalance < sum)
-                throw new IncorrectWidthdrawSumException(sum, card.CardBalance);
+            if (card.CardBalance <= sum)
+                throw new IncorrectWidthdrawAmountException(sum, card.CardBalance);
 
             card.CardBalance -= sum;
-            Option opt = operationService.AddInfoOption(card, sum);
-            return new WidthdrawViewDTO { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation, Sum = sum }; 
-          
+            Option opt = _operationService.Log(card.CardId, sum, 1);
+            return new ReportDto { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation.ToString(), Sum = sum }; 
         }
 
-        public BalanceViewDTO Balance(Card card)
+        public BalanceDto Balance(Card card)
         {
-            if(card.CardNumb != null)
-            {
-                operationService.AddInfoOption(card, null);
-                return new BalanceViewDTO { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = DateTime.Now };
-            }
-            return null;
+            _operationService.Log(card.CardId, null, 2);
+            return new BalanceDto { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = _timeProvider.Now };
         }
     }
 }

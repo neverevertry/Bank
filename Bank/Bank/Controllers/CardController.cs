@@ -16,32 +16,25 @@ namespace Bank.Controllers
             service = _service;
         }
 
-        public ViewResult Index() => View("Index");
+        public ViewResult Index() => View();
 
         [HttpPost]
         public async Task<IActionResult> Index(string CardNumb)
         {
-           Card card =  await service.GetCardByNumber(CardNumb);
-           if (card != null)
-           {
-                if (card.CardBanned)
-                    throw new BlockedCardException(CardNumb);
-                HttpContext.Session.SetString("CardNumber",CardNumb);
-                return View("Password");
-           }
-            throw new IncorrectLoginException(CardNumb);
+           await service.GetCardByNumber(CardNumb);
+           HttpContext.Session.SetString("CardNumber",CardNumb);
+           return View("Password");          
         }
 
-        public ViewResult Password() => View("Password");
+        public ViewResult Password() => View();
 
         [HttpPost]
         public async Task<IActionResult> Password(string password)
         {
             string CardNumb = HttpContext.Session.GetString("CardNumber");
             Card card = await service.GetCardByNumber(CardNumb);
-            if (service.IsPinCorrect(password, card))
-                return RedirectToAction("Menu", "CardMenu");
-            throw new IncorrectPinException();
+            service.ValidatePin(password, card);
+            return RedirectToAction("Menu", "CardMenu");
         }
     }
 }

@@ -36,7 +36,7 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PinHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
