@@ -2,7 +2,9 @@ using Application;
 using Application.Interfaces;
 using Application.Services;
 using Bank.Models.ViewModels;
+using Common.UnitOfWork;
 using DataAccess.Contexts;
+using DataAccess.UnitOfWork;
 using Domain.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +25,7 @@ namespace Bank
             services.AddTransient<ICardServices, CardService>();
             services.AddTransient<IOptionService, OptionService>();
             services.AddTransient<ITimeProvider, TimeProvider>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(typeof(Mapper.MapperProfile));
             services.AddSession();
         }

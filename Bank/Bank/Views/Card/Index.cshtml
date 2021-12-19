@@ -7,7 +7,7 @@
 <div asp-validation-summary="All" class="text-danger"></div>
 <form asp-action="Index" method="post">
     <div class="offset-md-5 col-md-2">
-        <input name="CardNumb" class="form-control" placeholder="Number Card:" />
+        <input name="CardNumb" class="form-control" @*readonly*@ placeholder="Number Card:" />
     </div>
     <div class="offset-md-5 col-md-2">
         <br>
@@ -31,7 +31,9 @@
                 <td><input type="button" style="height:100px;width:100px" value="9" OnClick="CardNumb.value += '9'"></td>
             </tr>
             <tr class="buttons">
+                <td></td>
                 <td><input type="button" style="height:100px;width:100px" value="0" OnClick="CardNumb.value += '0'"></td>
+                <td>
             </tr>
         </table>
     </div>

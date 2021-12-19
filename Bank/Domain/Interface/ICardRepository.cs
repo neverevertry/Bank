@@ -6,6 +6,6 @@ namespace Domain.Interface
     public interface ICardRepository
     {
         Task<Card> GetCardByNumber(string CardNumb);
-        Task Update(Card card);
+        void Update(Card card);
     }
 }

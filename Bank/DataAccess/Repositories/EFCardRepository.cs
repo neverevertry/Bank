@@ -1,7 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataAccess.Contexts
@@ -16,10 +15,9 @@ namespace DataAccess.Contexts
                                                                              .AsNoTracking()
                                                                              .SingleOrDefaultAsync(x => x.CardNumb == numb);
 
-        public async Task Update(Card card)
+        public void Update(Card card)
         {
             context.Cards.Update(card);
-            await context.SaveChangesAsync();
         }
     }
 }

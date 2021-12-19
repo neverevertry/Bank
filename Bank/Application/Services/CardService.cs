@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
-using Application.Services;
+using Application.Security;
+using DataAccess.UnitOfWork;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interface;
@@ -36,7 +37,7 @@ namespace Application
 
         public void ValidatePin(string pass, Card card)
         {
-            if (VerifyHashPassword.VerifyHash(pass, card.PinHash))
+            if (PasswordHasher.VerifyHash(pass, card.PinHash))
                  return;
 
             numberOfApptems++;
@@ -56,12 +57,13 @@ namespace Application
                 throw new IncorrectWidthdrawAmountException(sum, card.CardBalance);
 
             card.CardBalance -= sum;
+            _cardRepository.Update(card);
             Option opt = _operationService.Log(card.CardId, sum, 1);
             return new ReportDto { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation.ToString(), Sum = sum }; 
         }
 
         public BalanceDto Balance(Card card)
-        {
+        { 
             _operationService.Log(card.CardId, null, 2);
             return new BalanceDto { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = _timeProvider.Now };
         }
