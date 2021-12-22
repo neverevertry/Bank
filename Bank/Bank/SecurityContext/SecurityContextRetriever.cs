@@ -5,18 +5,20 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Bank.Security
+namespace Bank.SecurityContext
 {
-    public class ClaimsCookie : IClaimsCookie
+    public class SecurityContextRetriever : ISecurityContextRetriever
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ClaimsCookie(IHttpContextAccessor httpContextAccessor)
+        public string GetCardNumber => _httpContextAccessor.HttpContext.User.FindFirst("CardNumber").Value;
+
+        public SecurityContextRetriever(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task SignIn(string cardNumber)
+        public async Task LogIn(string cardNumber) 
         {
             var claims = new List<Claim>
             {
@@ -28,9 +30,7 @@ namespace Bank.Security
             await _httpContextAccessor.HttpContext.SignInAsync("CardCookie", new ClaimsPrincipal(identity));
         }
 
-        public string GetCardCookie() => _httpContextAccessor.HttpContext.User.FindFirst("CardNumber").Value;
-
-        public async Task SignOut() => await _httpContextAccessor.HttpContext.SignOutAsync();
+        public async Task LogOut() => await _httpContextAccessor.HttpContext.SignOutAsync();
 
     }
 }

@@ -1,7 +1,6 @@
-﻿using Application.Interfaces;
-using System;
+﻿using System;
 
-namespace Application.Services
+namespace Common.TimeProvider
 {
     public class TimeProvider : ITimeProvider
     {

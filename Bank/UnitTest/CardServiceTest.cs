@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Interfaces;
+using Common.TimeProvider;
 using Domain.Entities;
 using Domain.Interface;
 using FluentAssertions;

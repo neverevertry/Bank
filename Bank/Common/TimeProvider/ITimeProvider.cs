@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.Interfaces
+namespace Common.TimeProvider
 {
     public interface ITimeProvider
     {

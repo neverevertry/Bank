@@ -1,7 +1,7 @@
 using Application;
 using Application.Interfaces;
-using Application.Services;
-using Bank.Security;
+using Bank.SecurityContext;
+using Common.TimeProvider;
 using Common.UnitOfWork;
 using DataAccess.Contexts;
 using DataAccess.UnitOfWork;
@@ -27,7 +27,7 @@ namespace Bank
             services.AddTransient<IOptionService, OptionService>();
             services.AddTransient<ITimeProvider, TimeProvider>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IClaimsCookie, ClaimsCookie>();
+            services.AddTransient<ISecurityContextRetriever, SecurityContextRetriever>();
             services.AddAuthentication("CardCookie").AddCookie("CardCookie", options => options.Cookie.Name = "CardCookie");
             services.AddHttpContextAccessor();
             services.AddAutoMapper(typeof(Mapper.MapperProfile));
