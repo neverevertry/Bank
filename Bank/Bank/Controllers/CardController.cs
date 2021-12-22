@@ -1,9 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
-using Domain.Exceptions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace Bank.Controllers
@@ -11,9 +8,11 @@ namespace Bank.Controllers
     public class CardController : Controller
     {
         private readonly ICardServices service;
-        public CardController(ICardServices _service)
+        private readonly IClaimsCookie claimsCookie;
+        public CardController(ICardServices _service, IClaimsCookie _claimsCookie)
         {
             service = _service;
+            claimsCookie = _claimsCookie;
         }
 
         public ViewResult Index() => View();
@@ -21,9 +20,10 @@ namespace Bank.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string CardNumb)
         {
-           await service.GetCardByNumber(CardNumb);
-           HttpContext.Session.SetString("CardNumber",CardNumb);
-           return View("Password");          
+            await service.GetCardByNumber(CardNumb);
+            await claimsCookie.SignIn(CardNumb);
+
+            return View("Password");          
         }
 
         public ViewResult Password() => View();
@@ -31,8 +31,8 @@ namespace Bank.Controllers
         [HttpPost]
         public async Task<IActionResult> Password(string password)
         {
-            string CardNumb = HttpContext.Session.GetString("CardNumber");
-            Card card = await service.GetCardByNumber(CardNumb);
+            string CardNumber = claimsCookie.GetCardCookie();
+            Card card = await service.GetCardByNumber(CardNumber);
             service.ValidatePin(password, card);
             return RedirectToAction("Menu", "CardMenu");
         }

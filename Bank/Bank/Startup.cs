@@ -1,7 +1,7 @@
 using Application;
 using Application.Interfaces;
 using Application.Services;
-using Bank.Models.ViewModels;
+using Bank.Security;
 using Common.UnitOfWork;
 using DataAccess.Contexts;
 using DataAccess.UnitOfWork;
@@ -20,12 +20,16 @@ namespace Bank
             services.AddMvc();
             string ConString = @"Data Source = SPEED; Integrated Security = True; Initial Catalog = Bank; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(ConString));
+            services.AddHttpContextAccessor();
             services.AddTransient<ICardRepository, EFCardRepository>();
             services.AddTransient<IOptionRepository, EFOptionRepository>();
             services.AddTransient<ICardServices, CardService>();
             services.AddTransient<IOptionService, OptionService>();
             services.AddTransient<ITimeProvider, TimeProvider>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IClaimsCookie, ClaimsCookie>();
+            services.AddAuthentication("CardCookie").AddCookie("CardCookie", options => options.Cookie.Name = "CardCookie");
+            services.AddHttpContextAccessor();
             services.AddAutoMapper(typeof(Mapper.MapperProfile));
             services.AddSession();
         }
@@ -37,7 +41,9 @@ namespace Bank
             app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseRouting();
-            app.UseSession();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            //app.UseSession();
             app.UseEndpoints(options =>
                 options.MapControllerRoute("default", "{controller=Card}/{action=Index}"));
            

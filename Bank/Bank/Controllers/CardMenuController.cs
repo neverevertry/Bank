@@ -3,6 +3,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Bank.Models.ViewModels;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -13,11 +14,13 @@ namespace Bank.Controllers
     {
         private readonly ICardServices _cardService;
         private readonly IMapper _mapper;
+        private readonly IClaimsCookie _claimsCookie;
 
-        public CardMenuController(ICardServices cardService, IMapper mapper)
+        public CardMenuController(ICardServices cardService, IMapper mapper, IClaimsCookie claimsCookie)
         {
             _cardService = cardService;
             _mapper = mapper;
+            _claimsCookie = claimsCookie;
         }
 
 
@@ -28,7 +31,7 @@ namespace Bank.Controllers
         [HttpPost]
         public async Task<IActionResult> Widthdraw(decimal sum)
         {
-            string GetCard = HttpContext.Session.GetString("CardNumber");
+            string GetCard = _claimsCookie.GetCardCookie();
             Card card = await _cardService.GetCardByNumber(GetCard);
 
             ReportDto widthdrawResult = _cardService.Widthdraw(card, sum);
@@ -38,7 +41,7 @@ namespace Bank.Controllers
 
         public async Task<IActionResult> Balance()
         {
-            string GetCard = HttpContext.Session.GetString("CardNumber");
+            string GetCard = _claimsCookie.GetCardCookie();
             Card card = await _cardService.GetCardByNumber(GetCard);
 
             BalanceDto balanceDto = _cardService.Balance(card);
@@ -50,7 +53,7 @@ namespace Bank.Controllers
 
         public ActionResult Exit()
         {
-            HttpContext.Session.Clear();
+            _claimsCookie.SignOut();
             return RedirectToAction("Index", "Card");
         }
     }
