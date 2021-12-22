@@ -27,8 +27,9 @@ namespace Bank
             services.AddTransient<IOptionService, OptionService>();
             services.AddTransient<ITimeProvider, TimeProvider>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<ISecurityContextRetriever, SecurityContextRetriever>();
-            services.AddAuthentication("CardCookie").AddCookie("CardCookie", options => options.Cookie.Name = "CardCookie");
+            //services.AddTransient<ISecurityContextRetriever, SecurityContextRetriever>();
+            services.AddTransient<ISecurityContextRetriever, CardCookie>();
+           // services.AddAuthentication("CardCookie").AddCookie("CardCookie", options => options.Cookie.Name = "CardCookie");
             services.AddHttpContextAccessor();
             services.AddAutoMapper(typeof(Mapper.MapperProfile));
             services.AddSession();
@@ -43,7 +44,7 @@ namespace Bank
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseSession();
+            app.UseSession();
             app.UseEndpoints(options =>
                 options.MapControllerRoute("default", "{controller=Card}/{action=Index}"));
            

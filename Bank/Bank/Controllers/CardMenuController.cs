@@ -2,26 +2,24 @@
 using Application.Interfaces;
 using AutoMapper;
 using Bank.Models.ViewModels;
-using Bank.SecurityContext;
 using Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class CardMenuController : Controller
     {
-        private readonly ICardServices _cardService;
-        private readonly IMapper _mapper;
-        private readonly ISecurityContextRetriever _claimsCookie;
+        private readonly ICardServices cardService;
+        private readonly IMapper mapper;
+        private readonly ISecurityContextRetriever securityContextRetriever;
 
-        public CardMenuController(ICardServices cardService, IMapper mapper, ISecurityContextRetriever claimsCookie)
+        public CardMenuController(ICardServices _cardService, IMapper _mapper, ISecurityContextRetriever _securityContextRetriever)
         {
-            _cardService = cardService;
-            _mapper = mapper;
-            _claimsCookie = claimsCookie;
+            cardService = _cardService;
+            mapper = _mapper;
+            securityContextRetriever = _securityContextRetriever;
         }
 
 
@@ -32,29 +30,29 @@ namespace Bank.Controllers
         [HttpPost]
         public async Task<IActionResult> Widthdraw(decimal sum)
         {
-            string GetCard = _claimsCookie.GetCardNumber;
-            Card card = await _cardService.GetCardByNumber(GetCard);
+            string GetCard = securityContextRetriever.GetCardNumber;
+            Card card = await cardService.GetCardByNumber(GetCard);
 
-            ReportDto widthdrawResult = _cardService.Widthdraw(card, sum);
-            var report = _mapper.Map<ReportViewModel>(widthdrawResult);
+            ReportDto widthdrawResult = cardService.Widthdraw(card, sum);
+            var report = mapper.Map<ReportViewModel>(widthdrawResult);
             return View("WidthdrawSucces", report);
         }
 
         public async Task<IActionResult> Balance()
         {
-            string GetCard = _claimsCookie.GetCardNumber;
-            Card card = await _cardService.GetCardByNumber(GetCard);
+            string GetCard = securityContextRetriever.GetCardNumber;
+            Card card = await cardService.GetCardByNumber(GetCard);
 
-            BalanceDto balanceDto = _cardService.Balance(card);
+            BalanceDto balanceDto = cardService.Balance(card);
 
-            var balance = _mapper.Map<BalanceViewModel>(balanceDto);
+            var balance = mapper.Map<BalanceViewModel>(balanceDto);
 
             return View("Balance", balance);
         }
 
         public ActionResult Exit()
         {
-            _claimsCookie.LogOut();
+            securityContextRetriever.LogOut();
             return RedirectToAction("Index", "Card");
         }
     }

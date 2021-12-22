@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class CardController : Controller
     {
         private readonly ICardServices service;
@@ -17,7 +17,6 @@ namespace Bank.Controllers
             service = _service;
             claimsCookie = _claimsCookie;
         }
-
         [AllowAnonymous]
         public ViewResult Index() => View();
 
