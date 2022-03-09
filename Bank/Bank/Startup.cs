@@ -8,8 +8,10 @@ using DataAccess.UnitOfWork;
 using Domain.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace Bank
 {
@@ -27,9 +29,11 @@ namespace Bank
             services.AddTransient<IOptionService, OptionService>();
             services.AddTransient<ITimeProvider, TimeProvider>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            //services.AddTransient<ISecurityContextRetriever, SecurityContextRetriever>();
-            services.AddTransient<ISecurityContextRetriever, CardCookie>();
-           // services.AddAuthentication("CardCookie").AddCookie("CardCookie", options => options.Cookie.Name = "CardCookie");
+            services.AddTransient<ISecurityContextRetriever, SecurityContextRetriever>();
+            //services.AddTransient<ISecurityContextRetriever, CardCookie>();
+            services.AddAuthentication("CardCookie").AddCookie("CardCookie", options => options.Cookie.Name = "CardCookie");
+            services.AddAuthorization(opts => opts.AddPolicy("PartiallyAuthorized", policy => policy.RequireClaim("User")));
+            services.AddAuthorization(opts => opts.AddPolicy("Fulluser", policy => policy.RequireClaim("FullUser")));
             services.AddHttpContextAccessor();
             services.AddAutoMapper(typeof(Mapper.MapperProfile));
             services.AddSession();
@@ -44,7 +48,7 @@ namespace Bank
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSession();
+            //app.UseSession();
             app.UseEndpoints(options =>
                 options.MapControllerRoute("default", "{controller=Card}/{action=Index}"));
            

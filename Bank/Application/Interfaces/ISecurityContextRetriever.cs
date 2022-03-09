@@ -7,5 +7,6 @@ namespace Application.Interfaces
         Task LogIn(string cardNumber);
         string GetCardNumber { get; }
         Task LogOut();
+        Task PassIn(string cardNumber);
     }
 }

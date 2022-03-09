@@ -11,7 +11,7 @@ namespace Bank.SecurityContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public string GetCardNumber => _httpContextAccessor.HttpContext.User.FindFirst("CardNumber").Value;
+        public string GetCardNumber => _httpContextAccessor.HttpContext.User.FindFirst("User").Value;
 
         public SecurityContextRetriever(IHttpContextAccessor httpContextAccessor)
         {
@@ -22,9 +22,27 @@ namespace Bank.SecurityContext
         {
             var claims = new List<Claim>
             {
-                new Claim("CardNumber", cardNumber)
+                new Claim("User", cardNumber),
             };
 
+            await LoginInternal(claims);
+        }
+
+        public async Task PassIn(string cardNumber)
+        {
+            var oldClaim = _httpContextAccessor.HttpContext.User.FindFirst("User");
+
+            var claims = new List<Claim>
+            {
+                new Claim("FullUser", cardNumber),
+                oldClaim
+            };
+
+            await LoginInternal(claims);
+        }
+         
+        private async Task LoginInternal(List<Claim> claims)
+        {
             var identity = new ClaimsIdentity(claims, "CardCookie");
 
             await _httpContextAccessor.HttpContext.SignInAsync("CardCookie", new ClaimsPrincipal(identity));

@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.Security;
 using Common.TimeProvider;
+using Common.UnitOfWork;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interface;
@@ -14,14 +15,16 @@ namespace Application
         private readonly ICardRepository _cardRepository;
         private readonly IOptionService _operationService;
         private readonly ITimeProvider _timeProvider;
+        private readonly IUnitOfWork _unitOfWork;
 
         private static int numberOfApptems = 0;
 
-        public CardService(ICardRepository cardRepository, IOptionService operation, ITimeProvider timeProvider)
+        public CardService(ICardRepository cardRepository, IOptionService operation, ITimeProvider timeProvider, IUnitOfWork unitOfWork)
         {
             _cardRepository = cardRepository;
             _operationService = operation;
             _timeProvider = timeProvider;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Card> GetCardByNumber(string number)
         {
@@ -59,6 +62,7 @@ namespace Application
             card.CardBalance -= sum;
             _cardRepository.Update(card);
             Option opt = _operationService.Log(card.CardId, sum, 1);
+            _unitOfWork.SaveChangesAsync();
             return new ReportDto { Balance = card.CardBalance, CardNumber = card.CardNumb, Date = opt.DateOperation.ToString(), Sum = sum }; 
         }
 

@@ -3,12 +3,13 @@ using Application.Interfaces;
 using AutoMapper;
 using Bank.Models.ViewModels;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Bank.Controllers
 {
-    //[Authorize]
+    [Authorize(Policy = "Fulluser")]
     public class CardMenuController : Controller
     {
         private readonly ICardServices cardService;

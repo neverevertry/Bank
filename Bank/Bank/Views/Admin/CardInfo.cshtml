@@ -1,0 +1,24 @@
+﻿@model Card
+<form asp-action="CardInfo" method="post">
+    @if (Model != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Edit card Numb: @Model.CardNumb</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>
+                    Card Balance: <br />
+                    @Model.CardBalance
+                </td>
+                <td>
+                    Card Banned: <br />
+                    @Model.CardBanned
+                </td>
+            </tr>
+        </table>
+        <button type="submit" class="btn btn-danger">Edit</button>
+    }
+</form>

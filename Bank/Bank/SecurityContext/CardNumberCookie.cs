@@ -25,5 +25,10 @@ namespace Bank.SecurityContext
             _httpContextAccessor.HttpContext.Session.Clear();
             return Task.CompletedTask;
         }
+
+        public Task PassIn(string cardNumber)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
